@@ -95,17 +95,16 @@
     
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
-    
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [super touchesEnded:touches withEvent:event];
     BOOL shouldHidden = YES;
+    
     if (_delegate && [_delegate respondsToSelector:@selector(popMenuShouldDismissWhenSelectMaskView)]) {
         shouldHidden = [_delegate popMenuShouldDismissWhenSelectMaskView];
     }
     
     if (shouldHidden) {
-        [self hidden];
+        [KSPopMenu hiddenFromSubview];
     }
 }
 
@@ -116,19 +115,25 @@
     popview.delegate = delegate;
     popview.contentView = contentView;
     [popview show];
+    [[KSPopMenu globleArray] addObject:popview];
 }
 /**  向外界提供这个方法，隐藏*/
 + (void)hiddenFromSubview
 {
-    NSArray* array = [[UIApplication sharedApplication].keyWindow subviews];
-    for (UIView* subView in array) {
-        if ([subView isKindOfClass:[self class]]) {
-            KSPopMenu* menu = (KSPopMenu*)subView;
-            [menu hidden];
-            break;
-        }
-    }
+    [[[KSPopMenu globleArray] lastObject] hidden];
+    [[KSPopMenu globleArray] removeLastObject];
 }
+
+/**  记录当前显示的view,*/
++ (NSMutableArray *)globleArray{
+    NSMutableArray* array = objc_getAssociatedObject(self, "globleArray");
+    if (!array) {
+        array = [NSMutableArray array];
+        objc_setAssociatedObject(self, "globleArray", array, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return array;
+}
+
 #pragma mark- setting
 
 - (void)setDelegate:(id<KSPopMenuDelegate,KSPopMenuDataSource>)delegate{
