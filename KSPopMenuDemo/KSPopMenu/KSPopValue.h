@@ -9,6 +9,11 @@
 #ifndef KSPopValue_h
 #define KSPopValue_h
 
+typedef NS_ENUM(NSUInteger, KSPopMenuStyle) {
+    KSPopMenuStylePresent,
+    KSPopMenuStyleCustom,
+};
+
 struct KSPopAnimationValue {
     NSTimeInterval duration;
     NSTimeInterval delay;
@@ -46,6 +51,5 @@ KSPopAnimationDefalult()
     value.options = UIViewAnimationOptionCurveEaseInOut;
     return value;
 }
-
 
 #endif /* KSPopValue_h */
